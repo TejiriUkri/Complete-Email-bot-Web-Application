@@ -4,6 +4,12 @@ Run with: streamlit run app.py
 """
 
 import streamlit as st
+import os
+import streamlit as st
+
+# Load secrets from Streamlit Cloud into environment variables
+for key, value in st.secrets.items():
+    os.environ[key] = str(value)
 
 st.set_page_config(
     page_title="FollowUpBot",
