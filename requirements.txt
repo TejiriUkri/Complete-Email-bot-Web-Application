@@ -1,0 +1,18 @@
+# Core bot dependencies
+groq
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+python-dotenv
+
+# Web app
+streamlit
+pandas
+
+# Payments (Paystack uses standard HTTP — no extra SDK needed)
+flask
+
+# Utilities
+python-dateutil
+requests
