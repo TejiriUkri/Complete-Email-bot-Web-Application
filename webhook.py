@@ -21,6 +21,7 @@ Events handled:
 """
 
 import json
+import os
 from flask import Flask, request, jsonify
 from billing.paystack_handler import verify_webhook, handle_webhook_event
 from auth.user_db import activate_subscription, cancel_subscription, update_user
@@ -103,6 +104,11 @@ def paystack_webhook():
 
 
 if __name__ == "__main__":
-    print("🎣 Paystack webhook listener running on port 4242...")
-    print("📌 Point your Paystack webhook to: http://your-server:4242/webhook")
-    app.run(port=4242, debug=False)
+# 1. Use Render's dynamic port if available, otherwise default to 4242 locally
+    port = int(os.environ.get("PORT", 4242))
+    
+    print(f"🎧 Paystack webhook listener running on port {port}...")
+    print(f"📌 Point your Paystack webhook to your Render URL")
+    
+    # 2. CRITICAL: Added host="0.0.0.0" so Render can route traffic to it
+    app.run(host="0.0.0.0", port=port, debug=False)
