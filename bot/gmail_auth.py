@@ -50,7 +50,11 @@ def get_gmail_service():
                     f"Please upload your Google Cloud credentials file."
                 )
             flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
-            creds = flow.run_local_server(port=0)
+            flow.redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+            auth_url, _ = flow.authorization_url(prompt="consent")
+
+            print("AUTH_URL:" + auth_url)  # dashboard.py reads this
+            raise Exception("NEEDS_AUTH:" + auth_url)
 
         # Save token for future runs
         with open(token_file, "w") as token:

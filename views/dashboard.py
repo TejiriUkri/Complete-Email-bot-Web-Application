@@ -240,8 +240,31 @@ def show():
                         st.success("✅ Gmail connected successfully!")
                         st.rerun()
                     except Exception as e:
-                        st.error(f"Authentication failed: {e}")
-
+                        err = str(e)
+                        if err.startswith("NEEDS_AUTH:"):
+                            auth_url = err.replace("NEEDS_AUTH:", "")
+                            st.markdown(f"**Step 1:** [Click here to authorize Gmail]({auth_url})")
+                            st.markdown("**Step 2:** Copy the code Google gives you and paste it below:")
+                            auth_code = st.text_input("Paste authorization code here")
+                            if auth_code and st.button("Submit Code"):
+                                try:
+                                    from google_auth_oauthlib.flow import InstalledAppFlow
+                                    flow = InstalledAppFlow.from_client_secrets_file(secret_path, [
+                                        "https://www.googleapis.com/auth/gmail.send",
+                                        "https://www.googleapis.com/auth/gmail.compose",
+                                        "https://www.googleapis.com/auth/gmail.readonly"
+                                    ])
+                                    flow.redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+                                    flow.fetch_token(code=auth_code)
+                                    creds = flow.credentials
+                                    with open(token_path, "w") as f:
+                                        f.write(creds.to_json())
+                                    st.success("✅ Gmail connected successfully!")
+                                    st.rerun()
+                                except Exception as e2:
+                                    st.error(f"Failed: {e2}")
+                        else:
+                            st.error(f"Authentication failed: {e}")
     st.divider()
 
     # ─── Section 3: Bot Controls ──────────────────────────────────
